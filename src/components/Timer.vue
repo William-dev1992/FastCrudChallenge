@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "@vue/reactivity";
+import { watch, ref } from 'vue'
 
 const minutes = ref<string | number>('00')
 const seconds = ref<string | number>('00')
@@ -9,8 +9,8 @@ const newMinutes = ref('')
 const newSeconds = ref('')
 const timerInterval = ref()
 
-
 function handleTimer() {
+    // toggleModal()
     timerInterval.value = setInterval(() => {
         seconds.value = Number(seconds.value)
         minutes.value = Number(minutes.value)
@@ -30,8 +30,6 @@ function handleTimer() {
         formatTime()
     }, 1000)
 }
-
-defineExpose({handleTimer, setTime})
 
 function formatTime() {
     if (seconds.value.toString().length === 1) {
@@ -56,15 +54,25 @@ function setTime() {
     seconds.value = Number(newSeconds.value)
 
     formatTime()
-    toggleModal()
     clearTimerInterval(timerInterval.value)
-    handleTimer()
+
+    if (changeTime.value) {
+        changeTime.value = !changeTime.value
+    }
 }
+
+const emit = defineEmits(['timerChange'])
+
+watch([minutes, seconds], (value) => {
+    emit('timerChange', value);
+});
+
+defineExpose({handleTimer, setTime, toggleModal})
 
 </script>
 
 <template>
-    <p @click="toggleModal">{{ minutes }}:{{ seconds }}</p>
+    <p class="timer" @click="toggleModal">{{ minutes }}:{{ seconds }}</p>
     <div class="modal-overlay" v-if="changeTime">
         <div class="modal">
             <div class="time-inputs">
@@ -81,28 +89,9 @@ function setTime() {
 </template>
 
 <style>
-p {
+p.timer {
     font-size: 40px;
-    color: #E7DE79
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.4);
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-overlay .modal {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: #E7DE79;
 }
 
 .modal-overlay .modal .time-inputs {

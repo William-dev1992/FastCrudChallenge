@@ -1,12 +1,17 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
-import App from '../App.vue'
 import Start from '../views/Start.vue'
+import Statistics from '../views/Statistics.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: '',
     component: Start
+  },
+  {
+    path: '/statistics',
+    name: 'statistics',
+    component: Statistics
   }
 ]
 
