@@ -10,7 +10,6 @@ const newSeconds = ref('')
 const timerInterval = ref()
 
 function handleTimer() {
-    // toggleModal()
     timerInterval.value = setInterval(() => {
         seconds.value = Number(seconds.value)
         minutes.value = Number(minutes.value)
@@ -22,6 +21,7 @@ function handleTimer() {
             } else {
                 clearTimerInterval(timerInterval.value)
                 formatTime()
+                emit('timesUp')
                 return
             }
         }
@@ -61,13 +61,9 @@ function setTime() {
     }
 }
 
-const emit = defineEmits(['timerChange'])
+const emit = defineEmits(['timesUp'])
 
-watch([minutes, seconds], (value) => {
-    emit('timerChange', value);
-});
-
-defineExpose({handleTimer, setTime, toggleModal})
+defineExpose({handleTimer, setTime, toggleModal, changeTime})
 
 </script>
 

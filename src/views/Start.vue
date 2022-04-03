@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import { ref } from '@vue/reactivity'
 import Timer from '../components/Timer.vue'
+import Text from '../components/Text.vue'
+import { router } from '../router/index'
+import { onMounted } from '@vue/runtime-core'
+
 const teste = ref<any>({})
 const visible = ref<any>(true)
+
+window.onkeyup = () => {
+    if (!teste.value?.changeTime) {
+        startTimer()
+    }
+}
 
 function startTimer() {
     teste.value?.handleTimer()
@@ -17,15 +27,21 @@ function toggleModal() {
 
 function restartTimer() {
     teste.value?.setTime()
+    visible.value = true
+}
+
+function timesUp() {
+    router.push({ name: 'statistics' })
 }
 </script>
 
 <template>
     <div class="modal-overlay">
-        <Timer @click="toggleModal" :ref="component => teste = component"></Timer>
+        <Timer @times-up="timesUp()" @click="toggleModal" :ref="component => teste = component"></Timer>
+        <Text/>
         <div class="modal"  v-if="visible">
-            Clique aqui para iniciar!
             <button @click="startTimer">></button>
+            Click or press any key to start!
         </div>
         <button v-if="!visible" @click="restartTimer">Restart</button>
     </div>
@@ -44,6 +60,7 @@ function restartTimer() {
     left: 0;
     right: 0;
     background-color: rgba(0, 0, 0, 0.4);
+
 
     display: flex;
     flex-direction: column;
