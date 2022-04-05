@@ -10,6 +10,10 @@ const newSeconds = ref('')
 const timerInterval = ref()
 
 function handleTimer() {
+    if (minutes.value === '00' && seconds.value === '00') {
+        minutes.value = '01'
+    }
+
     timerInterval.value = setInterval(() => {
         seconds.value = Number(seconds.value)
         minutes.value = Number(minutes.value)

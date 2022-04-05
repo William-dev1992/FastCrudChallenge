@@ -5,28 +5,33 @@ import Text from '../components/Text.vue'
 import { router } from '../router/index'
 import { onMounted } from '@vue/runtime-core'
 
-const teste = ref<any>({})
+const timerComponent = ref<any>({})
+const textComponent = ref<any>({})
 const visible = ref<any>(true)
 
-window.onkeyup = () => {
-    if (!teste.value?.changeTime) {
+window.onkeyup = (event) => {
+    if (!timerComponent.value?.changeTime && visible.value) {
         startTimer()
     }
+
+    const verifier = !timerComponent.value?.changeTime && !visible.value
+
+    textComponent.value?.startText(verifier)
 }
 
 function startTimer() {
-    teste.value?.handleTimer()
+    timerComponent.value?.handleTimer()
     visible.value = false
 }
 
 function toggleModal() {
-    teste.value?.toggleModal()
+    timerComponent.value?.toggleModal()
 
     visible.value = false
 }
 
 function restartTimer() {
-    teste.value?.setTime()
+    timerComponent.value?.setTime()
     visible.value = true
 }
 
@@ -37,8 +42,8 @@ function timesUp() {
 
 <template>
     <div class="modal-overlay">
-        <Timer @times-up="timesUp()" @click="toggleModal" :ref="component => teste = component"></Timer>
-        <Text/>
+        <Timer @times-up="timesUp()" @click="toggleModal" :ref="component => timerComponent = component"></Timer>
+        <Text :ref="component => textComponent = component"/>
         <div class="modal"  v-if="visible">
             <button @click="startTimer">></button>
             Click or press any key to start!
