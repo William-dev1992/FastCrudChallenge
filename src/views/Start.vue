@@ -43,7 +43,7 @@ function timesUp() {
 <template>
     <div class="modal-overlay">
         <Timer @times-up="timesUp()" @click="toggleModal" :ref="component => timerComponent = component"></Timer>
-        <Text :ref="component => textComponent = component"/>
+        <Text @finished="timesUp()" :ref="component => textComponent = component"/>
         <div class="modal"  v-if="visible">
             <button @click="startTimer">></button>
             Click or press any key to start!
