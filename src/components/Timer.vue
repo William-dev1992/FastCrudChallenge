@@ -114,8 +114,8 @@ function setTime():void {
 function timePassed(): number[]{
     let passedMinutes, passedSeconds
     if (!newMinutes.value && !newSeconds.value) {
-        passedMinutes = 1 - Number(minutes.value)
-        return [passedMinutes, 0o0]
+        passedSeconds = 60 - Number(seconds.value)
+        return [0o0, passedSeconds]
     } else {
         passedMinutes = Number(newMinutes.value) - Number(minutes.value)
         passedSeconds = (Number(newSeconds.value) - Number(seconds.value))/60

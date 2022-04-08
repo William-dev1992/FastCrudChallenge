@@ -12,7 +12,7 @@ type Statistics = {
 // Get route and parse parameters.
 const route: Record<string, any> = useRoute()
 const entriesData = JSON.parse(route.params.data)
-const [minutesPassed, secondsPassed] = JSON.parse(route.params.time)
+const [minutesPassed, secondsPassed] = route.params.time
 
 // Mount a reactive object that calculate the statistics to be displayed.
 const stats: Statistics = reactive({
@@ -28,7 +28,21 @@ const stats: Statistics = reactive({
  * @returns - Time passed in minutes.
  */
 function timePassed(): number {
-    return Math.round(minutesPassed + (secondsPassed/60))
+    return minutesPassed + (secondsPassed/60)
+}
+
+/**
+ * Formating the time to be displayed.
+ * 
+ * @param value - Time value, either seconds or minutes.
+ * 
+ * @returns - Returns the formated time in 2 cases.
+ */
+function formatTime(value: number | string): string {
+    if (value.toString().length === 1) {
+        return value = `0${ value }`
+    }
+    return value.toString()
 }
 
 </script>
@@ -56,7 +70,7 @@ function timePassed(): number {
                 </div>
                 <div>
                     <h3>TIME</h3>
-                    <p>{{ minutesPassed }}:{{ secondsPassed }}</p>
+                    <p>{{ formatTime(minutesPassed) }}:{{ formatTime(secondsPassed) }}</p>
                 </div>
             </div>
         </div>
