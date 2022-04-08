@@ -9,16 +9,17 @@
             @finished="finished" 
             :ref="component => textComponent = component"/>
         <div class="modal"  v-if="visible">
-            <button @click="startTimer">></button>
+            <vue-feather class="play" @click="startTimer" type="play"></vue-feather>
             Press any key to start!
         </div>
-        <button v-if="!visible" @click="restartTimer">Restart</button>
+        <vue-feather class="restart" v-if="!visible" @click="restartTimer" type="rotate-cw"></vue-feather>
     </div>
 </template>
 
 <script setup lang="ts">
 import Text from '../components/Text.vue'
-import Timer from "../components/Timer.vue"
+import Timer from '../components/Timer.vue'
+import VueFeather from 'vue-feather'
 import { Entries } from '../components/Text.vue'
 import { ref } from '@vue/reactivity'
 import { router } from '../router/index'
@@ -90,6 +91,14 @@ function finished(entries: Entries): void {
 </script>
 
 <style>
+.play {
+    color: #67E480;
+}
+
+.restart {
+    color: #E7DE79;
+}
+
 .testText {
   width: 75%;
   align-self: center;

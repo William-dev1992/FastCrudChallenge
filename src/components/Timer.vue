@@ -8,8 +8,8 @@
                 <input class="input" v-model="newSeconds" type="number" min="0">
             </div>
             <div class="time-buttons">
-                <button @click="setTime">V</button>
-                <button @click="toggleModal">X</button>
+                <vue-feather class="play" @click="setTime" type="check-circle"></vue-feather>
+                <vue-feather class="wrong" @click="toggleModal" type="x"></vue-feather>
             </div>
         </div>
     </div>
@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import VueFeather from 'vue-feather'
 
 // Minutes and seconds that will be changed and displayed.
 const minutes = ref<string | number>('00')
