@@ -10,7 +10,7 @@
             :ref="component => textComponent = component"/>
         <div class="modal"  v-if="visible">
             <button @click="startTimer">></button>
-            Click or press any key to start!
+            Press any key to start!
         </div>
         <button v-if="!visible" @click="restartTimer">Restart</button>
     </div>
