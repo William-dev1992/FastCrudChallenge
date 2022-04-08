@@ -7,7 +7,7 @@ import { reactive, ref } from '@vue/reactivity'
 import { computed, watch } from '@vue/runtime-core'
 import axios from 'axios'
 
-type Entries = {
+export type Entries = {
     base: number
     total: number
     correct: number
