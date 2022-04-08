@@ -18,8 +18,8 @@
 
 <script setup lang="ts">
 import Text from '../components/Text.vue'
-import { Entries } from '../components/Text.vue'
 import Timer from "../components/Timer.vue"
+import { Entries } from '../components/Text.vue'
 import { ref } from '@vue/reactivity'
 import { router } from '../router/index'
 import { onMounted } from '@vue/runtime-core'
