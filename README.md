@@ -4,6 +4,8 @@
 
 > This application is created to test development capabilities using the Vue.js framework and Typescript, taking in consideration code quality, organization and best use of vue assets.
 
+[![viewbd0460253e39adc9.gif](https://s7.gifyu.com/images/viewbd0460253e39adc9.gif)](https://gifyu.com/image/SLpAc)
+
 Table of Contents
   * [Runnig project](#running-project)
   * [Views](#View)
