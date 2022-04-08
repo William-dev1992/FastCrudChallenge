@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { reactive } from "@vue/reactivity"
-import { computed } from "@vue/runtime-core"
 import { useRoute } from "vue-router"
 
+type Statistics = {
+    accuracy: number
+    WPM: number
+    correct: number
+    base: number
+}
+
+// Get route and parse parameters.
 const route: Record<string, any> = useRoute()
 const entriesData = JSON.parse(route.params.data)
 const timePassed = JSON.parse(route.params.time)
 
-const stats = reactive({
+// Mount a reactive object that calculate the statistics to be displayed.
+const stats: Statistics = reactive({
     accuracy: Math.round((entriesData.correct/entriesData.total)*100),
     WPM: Math.round(((entriesData.total/5))/timePassed),
     correct: Math.round((entriesData.correct/5)),
@@ -22,7 +30,7 @@ const stats = reactive({
         <div class="statsGrid">
             <div>
                 <h3>CON</h3>
-                <p>80%</p>
+                <p>?</p>
             </div>
             <div>
                 <h3>ACC</h3>
