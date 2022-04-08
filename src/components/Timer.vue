@@ -18,14 +18,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+// Minutes and seconds that will be changed and displayed.
 const minutes = ref<string | number>('00')
 const seconds = ref<string | number>('00')
-const changeTime = ref<boolean>(false)
 
+// Minutes and seconds setted by the modal to redetermine the timer values.
 const newMinutes = ref<string>('')
 const newSeconds = ref<string>('')
+
+// Reference for the time interval, so we can control and stop it.
 const timerInterval = ref()
 
+const changeTime = ref<boolean>(false)
+/**
+ * Sets the time interval responsible for changing the time displayed on the screen.
+ */
 function handleTimer(): void {
     if (minutes.value === '00' && seconds.value === '00') {
         minutes.value = '01'
@@ -54,6 +61,9 @@ function handleTimer(): void {
     }, 1000)
 }
 
+/**
+ * Responsible for formating the time value to a more visual format.
+ */
 function formatTime() {
     if (seconds.value.toString().length === 1) {
         seconds.value = `0${ seconds.value }`
@@ -64,14 +74,25 @@ function formatTime() {
     }
 }
 
+/**
+ * Clear the time interval passed when called.
+ * 
+ * @param intervalName - Time interval to be stoped.
+ */
 function clearTimerInterval(intervalName: ReturnType<typeof setInterval>): void {
     clearInterval(intervalName)
 }
 
+/**
+ * Toggle the visibility of the modal that changes the time value.
+ */
 function toggleModal(): void {
     changeTime.value = !changeTime.value
 }
 
+/**
+ * Gets the modelValue that was set on the inputs and use it to change the time that will be manipulated.
+ */
 function setTime():void {
     minutes.value = Number(newMinutes.value)
     seconds.value = Number(newSeconds.value)
@@ -84,6 +105,12 @@ function setTime():void {
     }
 }
 
+
+/**
+ * Reuturns the time passed since the running time interval was started.
+ * 
+ * @returns The total time passed.
+ */
 function timePassed(): number{
     if (!newMinutes.value && !newSeconds.value) {
         return 1
