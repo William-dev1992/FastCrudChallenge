@@ -1,55 +1,71 @@
+<template>
+    <p class="textColor textContainer" v-html="textDisplay"></p>
+</template>
+
 <script setup lang="ts">
-import { ref } from '@vue/reactivity'
+import { reactive, ref } from '@vue/reactivity'
+import { computed, watch } from '@vue/runtime-core'
+import axios from 'axios'
 
-const baseText = ref('|oh yes boy')
-
-const text = ref(baseText.value)
-const textDisplay = ref(text.value)
+const baseText = ref<string>('')
+const textDisplay = ref<string>(baseText.value)
+const splitedText = ref<string[]>([''])
 const currentIndex = ref<number>(0)
+
+const entries = reactive({
+    base: computed(() => splitedText.value.length),
+    total: 0,
+    correct: 0
+})
 
 const emit = defineEmits(['finished'])
 
-const splitedText = ref(text.value.split(''))
-function startText(verifier: boolean) {
+const ignoreTyping: string[] = ['CapsLock', 'Shift']
+
+watch(baseText, () => {
+    splitedText.value = baseText.value.split('')
+})
+
+const marker = '<span class="marker">|</span>'
+
+function startTyping(verifier: boolean) {
     window.onkeydown = (event) => {
         if (!verifier) {
             return
         }
 
         const typedLetter = event.key
+        entries.total++
+        
+        if (ignoreTyping.includes(typedLetter)) {
+            return
+        }
 
-        const fromIndex = splitedText.value.indexOf('|')
+        const fromIndex = splitedText.value.indexOf(marker)
+        splitedText.value.splice(fromIndex, 1)
 
         if (typedLetter === 'Backspace') {
-            currentIndex.value = currentIndex.value - 1
-
-            splitedText.value.splice(fromIndex, 1)
-            splitedText.value.splice(currentIndex.value, 0, '|')
-
-            splitedText.value.splice(currentIndex.value + 1, 1, `${baseText.value.split('')[currentIndex.value + 1]}`)
-
-
-            textDisplay.value = splitedText.value.join('')
-
-            return        
+            handleBackspace()
+            return
         }
 
-        splitedText.value.splice(fromIndex, 1)
-        splitedText.value.splice(currentIndex.value + 1, 0, '|')
+        splitedText.value.splice(currentIndex.value + 1, 0, marker)
 
-        if (typedLetter !== splitedText.value[currentIndex.value]) {
-            splitedText.value.splice(currentIndex.value, 1, `<span class='red'>${splitedText.value[currentIndex.value]}</span>`);
-        } else {
-            splitedText.value.splice(currentIndex.value, 1, `<span class='green'>${splitedText.value[currentIndex.value]}</span>`);
+        const colorClass = typedLetter !== splitedText.value[currentIndex.value] ? 'wrong' : 'right'
+
+        if (colorClass === 'right') {
+            entries.correct++
         }
+
+        splitedText.value.splice(currentIndex.value, 1, `<span class='${colorClass}'>${splitedText.value[currentIndex.value]}</span>`);
 
         textDisplay.value = splitedText.value.join('')
         currentIndex.value++
 
         if(currentIndex.value === baseText.value.length -1) {
-            const allCorrect = document.getElementsByClassName('red')
+            const allCorrect = document.getElementsByClassName('wrong')
             if (allCorrect.length === 0) {
-                emit('finished')
+                emitFinished()
             } else {
                 return
             }
@@ -57,20 +73,60 @@ function startText(verifier: boolean) {
     }
 }
 
-defineExpose({startText})
+function emitFinished(): void{
+    emit('finished', entries)
+}
+
+function startText(): void {
+    axios.get('https://favqs.com/api/qotd').then(response => {
+        currentIndex.value = 0
+
+        baseText.value = response.data.quote.body
+        textDisplay.value = baseText.value
+    })
+}
+
+function handleBackspace(): void {
+    if (currentIndex.value === 0) {
+        return
+    }
+    
+    currentIndex.value = currentIndex.value - 1
+    splitedText.value.splice(currentIndex.value, 0, marker)
+    splitedText.value.splice(currentIndex.value + 1, 1, `${baseText.value.split('')[currentIndex.value]}`)
+    textDisplay.value = splitedText.value.join('')
+}
+
+defineExpose({startTyping, startText, emitFinished})
 
 </script>
 
-<template>
-    <p v-html="textDisplay"></p>
-</template>
+<script lang="ts">
+export default {};
+</script>
 
 <style>
-.red {
-    color: red !important;
+.textColor {
+    color: #41414D
 }
 
-.green {
-    color: green !important;
+.marker {
+    color: #E7DE79;
+}
+
+.wrong {
+    color: #E96379;
+}
+
+.right {
+    color: #E1E1E6;
+}
+
+.textContainer {
+    max-width: 650px;
+
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 </style>

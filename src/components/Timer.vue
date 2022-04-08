@@ -1,15 +1,32 @@
+<template>
+    <p class="timer" @click="toggleModal">{{ minutes }}:{{ seconds }}</p>
+    <div class="modal-overlay" v-if="changeTime">
+        <div class="modal">
+            <div class="time-inputs">
+                <input class="input" v-model="newMinutes" type="number" min="0">
+                <p>:</p>
+                <input class="input" v-model="newSeconds" type="number" min="0">
+            </div>
+            <div class="time-buttons">
+                <button @click="setTime">V</button>
+                <button @click="toggleModal">X</button>
+            </div>
+        </div>
+    </div>
+</template>
+
 <script setup lang="ts">
-import { watch, ref } from 'vue'
+import { ref } from 'vue'
 
 const minutes = ref<string | number>('00')
 const seconds = ref<string | number>('00')
 const changeTime = ref<boolean>(false)
 
-const newMinutes = ref('')
-const newSeconds = ref('')
+const newMinutes = ref<string>('')
+const newSeconds = ref<string>('')
 const timerInterval = ref()
 
-function handleTimer() {
+function handleTimer(): void {
     if (minutes.value === '00' && seconds.value === '00') {
         minutes.value = '01'
     }
@@ -17,6 +34,8 @@ function handleTimer() {
     timerInterval.value = setInterval(() => {
         seconds.value = Number(seconds.value)
         minutes.value = Number(minutes.value)
+
+        emit('timePassed', timePassed())
 
         if (seconds.value === 0) {
             if (minutes.value !== 0) {
@@ -45,15 +64,15 @@ function formatTime() {
     }
 }
 
-function clearTimerInterval(intervalName: any) {
+function clearTimerInterval(intervalName: ReturnType<typeof setInterval>): void {
     clearInterval(intervalName)
 }
 
-function toggleModal() {
+function toggleModal(): void {
     changeTime.value = !changeTime.value
 }
 
-function setTime() {
+function setTime():void {
     minutes.value = Number(newMinutes.value)
     seconds.value = Number(newSeconds.value)
 
@@ -65,28 +84,26 @@ function setTime() {
     }
 }
 
-const emit = defineEmits(['timesUp'])
+function timePassed(): number{
+    if (!newMinutes.value && !newSeconds.value) {
+        return 1
+    } else {
+        const passedMinutes = Number(newMinutes.value) - Number(minutes.value)
+        const passedSeconds = (Number(newSeconds.value) - Number(seconds.value))/60
+
+        return Math.round(passedMinutes + passedSeconds)
+    }
+}
+
+const emit = defineEmits(['timesUp', 'timePassed'])
 
 defineExpose({handleTimer, setTime, toggleModal, changeTime})
 
 </script>
 
-<template>
-    <p class="timer" @click="toggleModal">{{ minutes }}:{{ seconds }}</p>
-    <div class="modal-overlay" v-if="changeTime">
-        <div class="modal">
-            <div class="time-inputs">
-                <input class="input" v-model="newMinutes" type="number">
-                <p>:</p>
-                <input class="input" v-model="newSeconds" type="number">
-            </div>
-            <div class="time-buttons">
-                <button @click="setTime">V</button>
-                <button @click="toggleModal">X</button>
-            </div>
-        </div>
-    </div>
-</template>
+<script lang="ts">
+export default {};
+</script>
 
 <style>
 p.timer {

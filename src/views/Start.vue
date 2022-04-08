@@ -1,6 +1,18 @@
+<template>
+    <div class="modal-overlay">
+        <Timer @time-passed="(value) => timePassed = value" @times-up="timesUp" @click="toggleModal" :ref="component => timerComponent = component"></Timer>
+        <Text @finished="finished" :ref="component => textComponent = component"/>
+        <div class="modal"  v-if="visible">
+            <button @click="startTimer">></button>
+            Click or press any key to start!
+        </div>
+        <button v-if="!visible" @click="restartTimer">Restart</button>
+    </div>
+</template>
+
 <script setup lang="ts">
 import { ref } from '@vue/reactivity'
-import Timer from '../components/Timer.vue'
+import Timer from "../components/Timer.vue"
 import Text from '../components/Text.vue'
 import { router } from '../router/index'
 import { onMounted } from '@vue/runtime-core'
@@ -9,6 +21,8 @@ const timerComponent = ref<any>({})
 const textComponent = ref<any>({})
 const visible = ref<any>(true)
 
+const timePassed = ref<number>(0)
+
 window.onkeyup = (event) => {
     if (!timerComponent.value?.changeTime && visible.value) {
         startTimer()
@@ -16,41 +30,38 @@ window.onkeyup = (event) => {
 
     const verifier = !timerComponent.value?.changeTime && !visible.value
 
-    textComponent.value?.startText(verifier)
+    textComponent.value?.startTyping(verifier)
 }
 
-function startTimer() {
+onMounted(() => {
+    textComponent.value?.startText()
+})
+
+function startTimer(): void {
     timerComponent.value?.handleTimer()
     visible.value = false
 }
 
-function toggleModal() {
+function toggleModal(): void {
     timerComponent.value?.toggleModal()
 
     visible.value = false
 }
 
-function restartTimer() {
+function restartTimer(): void {
     timerComponent.value?.setTime()
     visible.value = true
+    textComponent.value?.startText()
 }
 
-function timesUp() {
-    router.push({ name: 'statistics' })
+function timesUp(): void {
+    textComponent.value?.emitFinished()
+}
+
+function finished(entries: Record<string, number>) {
+    router.push({ name: 'statistics', params: { data: JSON.stringify(entries), time: timePassed.value } })
 }
 </script>
-
-<template>
-    <div class="modal-overlay">
-        <Timer @times-up="timesUp()" @click="toggleModal" :ref="component => timerComponent = component"></Timer>
-        <Text @finished="timesUp()" :ref="component => textComponent = component"/>
-        <div class="modal"  v-if="visible">
-            <button @click="startTimer">></button>
-            Click or press any key to start!
-        </div>
-        <button v-if="!visible" @click="restartTimer">Restart</button>
-    </div>
-</template>
 
 <style>
 .testText {

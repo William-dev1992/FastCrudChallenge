@@ -1,4 +1,18 @@
 <script setup lang="ts">
+import { reactive } from "@vue/reactivity"
+import { computed } from "@vue/runtime-core"
+import { useRoute } from "vue-router"
+
+const route: Record<string, any> = useRoute()
+const entriesData = JSON.parse(route.params.data)
+const timePassed = JSON.parse(route.params.time)
+
+const stats = reactive({
+    accuracy: Math.round((entriesData.correct/entriesData.total)*100),
+    WPM: Math.round(((entriesData.total/5))/timePassed),
+    correct: Math.round((entriesData.correct/5)),
+    base: Math.round((entriesData.base/5))
+})
 
 </script>
 
@@ -12,20 +26,20 @@
             </div>
             <div>
                 <h3>ACC</h3>
-                <p>90%</p>
+                <p>{{ stats.accuracy }}%</p>
             </div>
             <div>
                 <h3>WPM</h3>
-                <p>30</p>
+                <p>{{ stats.WPM }}</p>
             </div>
             <div class="secondRow">
                 <div>
                     <h3>WORDS</h3>
-                    <p>250/300</p>
+                    <p>{{ stats.correct }}/{{ stats.base }}</p>
                 </div>
                 <div>
                     <h3>TIME</h3>
-                    <p>01:00</p>
+                    <p>{{ timePassed }} minutes</p>
                 </div>
             </div>
         </div>
