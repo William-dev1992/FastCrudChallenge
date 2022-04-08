@@ -111,14 +111,16 @@ function setTime():void {
  * 
  * @returns The total time passed.
  */
-function timePassed(): number{
+function timePassed(): number[]{
+    let passedMinutes, passedSeconds
     if (!newMinutes.value && !newSeconds.value) {
-        return 1
+        passedMinutes = 1 - Number(minutes.value)
+        return [passedMinutes, 0o0]
     } else {
-        const passedMinutes = Number(newMinutes.value) - Number(minutes.value)
-        const passedSeconds = (Number(newSeconds.value) - Number(seconds.value))/60
+        passedMinutes = Number(newMinutes.value) - Number(minutes.value)
+        passedSeconds = (Number(newSeconds.value) - Number(seconds.value))/60
 
-        return Math.round(passedMinutes + passedSeconds)
+        return [passedMinutes, passedSeconds]
     }
 }
 
