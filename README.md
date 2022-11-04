@@ -1,5 +1,5 @@
 <h1 align="center">
-  FastCrud challenge
+  FastCrud   challenge
 </h1>
 
 > This application is created to test development capabilities using the Vue.js framework and Typescript, taking in consideration code quality, organization and best use of vue assets.
